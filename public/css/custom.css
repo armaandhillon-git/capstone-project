@@ -207,7 +207,7 @@ footer a {
   text-decoration: none;
 }
 
-.formError {
+.form_error, .formError {
   position: relative;
   width: auto;
   padding-top: 1px;
