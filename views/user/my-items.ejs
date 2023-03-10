@@ -1,0 +1,93 @@
+<%- include('../templates/user_header', {app: app_const, session, title: "My Items"}); %>
+
+<!-- Page content-->
+<div class="container-fluid">
+
+  <h1 class="mt-4"><small>My Items</small></h1>
+
+  <div class="table-responsive py-3">
+    <table class="table table-striped table-bordered prd_table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Item Name</th>
+          <th>Item Description</th>
+          <th>Est. Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% prds.forEach(function(prd){ %>
+          <tr id="row_<%= prd.prd_id %>" data-id="<%= prd.prd_id %>">
+            <td class="btn_row">
+              <img src="/uploads/<%= prd.prd_image %>">
+              <br><a target="_blank" href="/user/edit-item/<%= prd.prd_id %>" class="btn btn-xs btn-primary">Edit</a> | <button onclick="remove_item(event, 0)" class="btn btn-sm btn-danger">Delete</button>
+            </td>
+            <td><%= prd.cat_name %></td>
+            <td><%= prd.loc_name %></td>
+            <td><%= prd.prd_name %></td>
+            <td><%= prd.prd_desc %></td>
+            <td> &dollar;<%= prd.price %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal_entry" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="update_category(event)">
+          <div class="form-group">
+            <label>Category Name</label>
+            <input required class="form-control" id="name">
+            <input type="hidden" id="cat_id">
+          </div>
+          <p id="errmsg"></p>
+          <div class="py-3" id="sbutton">
+            <button type="submit" class="btn btn-primary">Create</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal_delete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger delete_action_btn" data-bs-dismiss="modal"> Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<%- include('../templates/user_footer', {app: app_const}); %>

@@ -276,13 +276,14 @@ function update_item(event, ch){
 	let fdata = new FormData($(event.target)[0]);
 	fdata.append("ch", ch);
 
+	$(".form_error").remove();
 	let sbutton = $("#sbutton").html(); //grab the initial content
 	$("#errmsg").html('');
 	$("#sbutton").html('<span class="fa fa-spin fa-spinner fa-2x"></span> Submitting...');
    
    $.ajax({
 	 type: "POST",
-	 url:   "",
+	 url:   (ch == 'add_item')?"/user/add-item":"/user/edit-item",
 	 data: fdata,
 	 cache: false,
 	 processData : false,
@@ -305,7 +306,8 @@ function update_item(event, ch){
                 }
                  else{
                      rdata['errors'].forEach(function(error){
-                         $("#"+error[0]).after('<span class="formError">'+error[1]+'</span>');
+                         $("#"+error[0]).after('<span class="form_error">'+error[1]+'</span>');
+						 $("#"+error[0])[0].focus();
                      });
                      myalert('<div class="alert alert-danger">Error!</div>');
                  }
@@ -337,14 +339,13 @@ function remove_item(event, np){
   }
   else{
      
-     let fdata = {ch: 'remove_item', id: glob_entry_id};
+     let fdata = {prd_id: glob_entry_id};
      let sbutton = $('.table  #row_'+ glob_entry_id + ' .btn_row').html();
      $('.table  #row_'+ glob_entry_id + ' .btn_row').html('<span class="fa fa-spin fa-spinner"></span> processing...')
          
       $.ajax({
-      type: "POST",
-      url:  "",
-      data: fdata,
+      type: "DELETE",
+      url:  "/user/remove-item/"+glob_entry_id,
       success: function(data){  console.log(data);
               if(data.substr(0,4) == 'PASS'){
                  

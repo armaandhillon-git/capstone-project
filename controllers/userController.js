@@ -1,10 +1,17 @@
 const validator = require('validator');
 const UserModel = require("../models/userModel");
-const bcrypt = require("bcrypt")
+const dbModel = require("../models/dbModel");
+const bcrypt = require("bcrypt");
+const fs = require("fs");
+
 
 let User = {}
 
 let session;
+
+
+
+
 
 User.sign_up = function(req, res){
     let errors = [];
@@ -125,5 +132,129 @@ User.login = function(req, res){
 
     }
 }
+
+
+
+
+User.add_item = function(req, res){
+    let errors = [];
+	session = req.session;
+
+    let user_id = session.uid;
+    let prd_image = "";
+    let prd_image_full = "";
+    let cat_id = parseInt(req.body.cat_id);
+    let loc_id = parseInt(req.body.loc_id);
+    let prd_name = req.body.prd_name;
+    let prd_desc = req.body.prd_desc;
+    let price = req.body.price;
+    
+    if (prd_name.length < 3) {
+        errors.push(['prd_name', "Please eneter a valid product name"]);
+    }
+    if (prd_desc.length < 12) {
+        errors.push(['prd_desc', "Description too short"]);
+    }
+    if (!req.file) {
+        errors.push(['prd_image', "Please upload a valid image file"]);
+    }
+    else{
+        //console.log(req.file);
+        prd_image_path =  req.file.path;
+        prd_image = req.file.filename;
+    }
+    
+    if(errors.length){
+        if(prd_image != ""){
+            try {fs.unlinkSync(prd_image_path);} catch (error) {}
+        }
+        res.send(JSON.stringify({errors}));
+        return;
+    }
+    
+    dbModel.createItem({user_id, prd_name, prd_desc, cat_id, loc_id, price, prd_image}, function(err, response){
+        console.log(err);
+        if(err){
+            try {fs.unlinkSync(prd_image_path);} catch (error) {}
+            res.send(JSON.stringify(err));
+            return
+        }
+        let prd_id = response.insertId;
+        res.send(JSON.stringify({prd_id}));
+        
+    });
+}
+
+
+User.edit_item = function(req, res){
+    let errors = [];
+	session = req.session;
+
+    let user_id = session.uid;
+    let prd_image = "";
+    let prd_image_full = "";
+    let prd_id = parseInt(req.body.prd_id);
+    let cat_id = parseInt(req.body.cat_id);
+    let loc_id = parseInt(req.body.loc_id);
+    let prd_name = req.body.prd_name;
+    let prd_desc = req.body.prd_desc;
+    let price = req.body.price;
+    
+    if (prd_name.length < 3) {
+        errors.push(['prd_name', "Please eneter a valid product name"]);
+    }
+    if (prd_desc.length < 12) {
+        errors.push(['prd_desc', "Description too short"]);
+    }
+    if (req.file) {
+        prd_image_path =  req.file.path;
+        prd_image = req.file.filename;
+    }
+    if(errors.length){
+        if(prd_image != ""){
+            try {fs.unlinkSync(prd_image_path);} catch (error) { console.log(error);}
+        }
+        res.send(JSON.stringify({errors}));
+        return;
+    }
+    let query = "SELECT * FROM items WHERE user_id = ? AND prd_id = ?";
+    let values = [session.uid, prd_id];
+    let item_data = {prd_name, prd_desc, cat_id, loc_id, price}
+    if(session.role == 1){ // If admin
+        query = "SELECT * FROM items WHERE prd_id = ?";
+        values = [prd_id];
+    }
+    // Get previous item details.
+    dbModel.getOne(query, values, function(err, bf_item){
+        
+        if(bf_item == null){
+            res.redirect("/");
+            return;
+        }
+        if(prd_image != ""){
+            item_data["prd_image"] = prd_image;
+        }
+        dbModel.updateItem(item_data, prd_id, function(err, response){
+            if(err){
+                if(prd_image != ""){
+                    try {fs.unlinkSync(prd_image_path);} catch (error) {}
+                }
+                res.send(JSON.stringify(err));
+                return
+            }
+            if(prd_image != ""){ // Delete previous image
+                try {fs.unlinkSync('public/uploads/'+bf_item.prd_image);} catch (error) {console.log(error);}  
+            }
+            let prd_id = response.insertId;
+            res.send(JSON.stringify({prd_id}));
+            
+        });
+    });
+}
+
+
+
+
+
 
 module.exports = User;

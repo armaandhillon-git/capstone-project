@@ -1,0 +1,80 @@
+
+<%- include('../templates/user_header', {app: app_const, session, title: "Add Item"}); %>
+
+<!-- Page content-->
+<div class="container-fluid">
+
+  <h1 class="mt-4"><small>Add an Item</small></h1>
+
+  <form class="prd_form" id="prd_form" onsubmit="update_item(event, 'add_item')">
+
+    <div class="row">
+      <div class="col-12 col-md-6 form-group">
+        <label>Select Item Category </label>
+        <select class="form-control" name="cat_id" id="cat_id" required>
+          <option value=""></option>
+          <% cats.forEach(function(cat){ %>
+             <option value="<%= cat.cat_id %>"><%= cat.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="col-12 col-md-6 form-group">
+        <label>Your location/City </label>
+        <select class="form-control" name="loc_id" id="loc_id" required>
+          <option></option>
+          <% locs.forEach(function(loc){ %>
+            <option value="<%= loc.loc_id %>"><%= loc.name %></option>
+         <% }); %>
+        </select>
+      </div>
+      <div class="col-12 col-md-6 form-group">
+        <label>Item Name </label>
+        <input class="form-control" name="prd_name" id="prd_name" required>
+      </div>
+      <div class="col-12 col-md-6 form-group">
+        <label>Item Description </label>
+        <textarea class="form-control" name="prd_desc" id="prd_desc" required></textarea>
+      </div>
+      <div class="col-12 col-md-6 form-group">
+        <label>Est. Price: </label>
+        <input class="form-control" type="number" step="0.01" id="price" name="price" required>
+      </div>
+
+      <div class="col-12 col-md-6 form-group">
+        <label>Upload Image <small>png, jpg, gif only</small></label>
+        <input class="form-control" id="prd_image" name="prd_image" accept="image/*" type="file" required>
+      </div>
+
+    </div>
+    <br>
+    <hr>
+    <p id="errmsg"></p>
+    <div id="sbutton" class="py-3">
+      <button class="btn btn-primary btn-lg">Submit</button>
+    </div>
+  </form>
+  <br><br>
+
+
+</div>
+</div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal_alert" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../templates/user_footer', {app: app_const}); %>
