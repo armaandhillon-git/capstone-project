@@ -130,12 +130,56 @@ router.get("/my-items", (req, res) => {
 });
 
 
+// ALl Items Page - accessible to only admin
+router.get("/all-items", (req, res) => {
+	session = req.session;
+    if(session.role != 1){
+        res.send("NO access");
+        return;
+    }
+    dbModel.getAll("SELECT a.*, b.fname, c.name AS cat_name, d.name AS loc_name FROM items a LEFT JOIN user b ON a.user_id = b.user_id LEFT JOIN categories c ON a.cat_id = c.cat_id LEFT JOIN locations d ON a.loc_id = d.loc_id", [], function(err, response){
+		let prds = response;
+		res.render("user/all-items", {app_const, session, prds});
+	});
+
+});
+
+
+// UPDATE Profile
+router.get("/update-profile", (req, res) => {
+	session = req.session;
+
+	dbModel.getOne("SELECT * FROM user WHERE user_id = ?", [session.uid], function(err, response){
+		let this_user = response;
+		dbModel.getAll("SELECT * FROM categories", [], function(err, response){
+			let cats = response;
+			res.render("user/update-profile", {app_const, session, user: this_user});
+		}); 
+	});
+});
+
+// Render Change Password  page
+router.get("/change-password", (req, res) => {
+	session = req.session;
+	res.render("user/change-password", {app_const, session});
+});
+
+
+
+
+
 // Handle user add Items submission
 router.post("/add-item", upload.single("prd_image"), user.add_item)
 
 
 // Handle user  Items update  submission
-router.post("/edit-item", upload.single("prd_image"), user.edit_item)
+router.post("/edit-item", upload.single("prd_image"), user.edit_item);
+
+// Handle user  Profile Update
+router.post("/update-profile",  user.update_profile)
+
+// Handle Chnage   Password Request
+router.post("/change-password",  user.change_password)
 
 
 

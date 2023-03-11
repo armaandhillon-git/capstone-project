@@ -45,8 +45,8 @@ User.sign_up = function(req, res){
 			errors.push(['phone', "Please eneter a valid phone number"]);
 		}
 
-		if (password == "") {
-			errors.push(['password', "Please enter a valid password"]);
+		if (password.length < 6) {
+			errors.push(['password', "Please enter a valid password; minimum characters should be 6"]);
 		} else {
 			if (password != password2) {
 				errors.push(['password2', "Password not matched"]);
@@ -253,6 +253,105 @@ User.edit_item = function(req, res){
 }
 
 
+
+User.update_profile = function(req, res){
+    let errors = [];
+	session = req.session;
+	
+    let email = req.body.email.trim();
+    let fname = req.body.fname.trim();
+    let phone = req.body.phone.trim();
+    let address = req.body.address.trim();
+
+
+    if (email == "") {
+        errors.push(['email', "Please provide email address"]);
+    } else if(!validator.isEmail(email)) {
+        errors.push(['email', "Please provide email address"]);
+    }
+    if (fname.length < 3) {
+        errors.push(['fname', "Please eneter a valid name"]);
+    }
+    if (address.length < 10) {
+        errors.push(['address', "Please eneter a proper address"]);
+    }
+    if (!validator.isMobilePhone(phone)) {
+        errors.push(['phone', "Please eneter a valid phone number"]);
+    }
+
+    dbModel.getOne("SELECT * FROM user WHERE email = ? AND user_id != ?", [email, session.uid], function(err, response){
+        //console.log(response);
+        if(response != null){
+            errors.push(['email', "Email address already exist"]);
+        }
+        if(errors.length){
+            res.send(JSON.stringify(errors));
+            return;
+        }
+        
+        // UPFATE the user no
+        UserModel.updateUser(session.uid, {email, fname, phone,address}, function(err, response){
+            if(err){
+                res.send("Error: "+ JSON.stringify(err));
+            }
+            else{
+                res.send("PASS");
+            }
+        });
+
+    });
+
+
+}
+
+
+
+User.change_password = function(req, res){
+    let errors = [];
+	session = req.session;
+
+    let opassword = req.body.opassword;
+    let password = req.body.password;
+    let password2 = req.body.password2
+
+    if (password.length < 6) {
+        errors.push(['password', "Please enter a valid password; minimum characters should be 6"]);
+    } else {
+        if (password != password2) {
+            errors.push(['password2', "Password not matched"]);
+        }
+    }
+    UserModel.getUserById(session.uid, async function(err, response){
+        //console.log(response);
+        if(!response.length){
+            res.send("Please refresh page");
+            return;
+        }
+        //Verify old password
+        const verify_password = await bcrypt.compare(opassword, response[0].password);
+        if(!verify_password){
+            errors.push(['opassword', "Password not correct"]);
+        }
+        if(errors.length){
+            res.send(JSON.stringify(errors));
+            return;
+        }
+        // Lets hash the password
+        password = await bcrypt.hash(password, 10);
+        
+        // Update the user password
+        UserModel.updateUser(session.uid, {password}, function(err, response){
+            if(err){
+                res.send("Error: "+ JSON.stringify(err));
+            }
+            else{
+                res.send("PASS");
+            }
+        });
+
+    });
+
+}
 
 
 

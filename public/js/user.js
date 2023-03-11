@@ -364,6 +364,103 @@ function remove_item(event, np){
 
 
 
+function update_profile(event) {
+	event.preventDefault();
+  
+	let email = $("#email").val().trim();
+	let fname = $("#fname").val().trim();
+	let phone = $("#phone").val().trim();
+	let address = $("#address").val().trim();
+  
+	let fdata = {email, fname, phone, address};
+  
+	let sbutton = $("#sbutton").html(); //grab the initial content
+  
+	$("#errmsg").html("");
+	$(".form_error").remove();
+  
+	$("#sbutton").html(
+	  '<span class="fa fa-spin fa-spinner fa-2x"></span>Please wait...'
+	);
+	$("#report").html('');
+  
+	$.ajax({
+	  type: "POST",
+	  url: "/user/update-profile",
+	  data: fdata,
+	  success: function (data) {
+		$("#sbutton").html(sbutton);
+		if(data == 'PASS'){
+		  $("#report").html('<div class="alert alert-success text-center py-3"><span class="fa  fa-2x fa-check-circle text-success"></span> Account updated succefully </div>');
+		}
+		else{
+			try{
+				let rdata = JSON.parse(data);
+				rdata.forEach(function(row){
+					$("#"+row[0]).after('<div class="form_error">'+row[1]+'</div>');
+					$("#"+row[0])[0].focus();
+				});
+			}catch(exception){
+				alert(data);
+			}
+			
+		}
+  
+	  },
+	});
+  }
+  
+
+
+  
+function  update_password(event){
+	event.preventDefault();
+  
+	let opassword = $("#opassword").val().trim();
+	let password = $("#password").val().trim();
+	let password2 = $("#password2").val().trim();
+	
+	let fdata = {opassword, password, password2};
+  
+	let sbutton = $("#sbutton").html(); //grab the initial content
+  
+	$("#errmsg").html("");
+	$(".form_error").remove();
+  
+	$("#sbutton").html(
+	  '<span class="fa fa-spin fa-spinner fa-2x"></span>Please wait...'
+	);
+	$("#report").html('');
+  
+	$.ajax({
+	  type: "POST",
+	  url: "/user/change-password",
+	  data: fdata,
+	  success: function (data) {
+		$("#sbutton").html(sbutton);
+		if(data == 'PASS'){
+			$("#cform")[0].reset();
+		  $("#report").html('<div class="alert alert-success text-center py-3"><span class="fa  fa-2x fa-check-circle text-success"></span> Password updated succefully </div>');
+		}
+		else{
+			try{
+				let rdata = JSON.parse(data);
+				rdata.forEach(function(row){
+					$("#"+row[0]).after('<div class="form_error">'+row[1]+'</div>');
+					$("#"+row[0])[0].focus();
+				});
+			}catch(exception){
+				alert(data);
+			}
+			
+		}
+  
+	  },
+	});
+  }
+  
+
+
 function myalert(msg){
     $("#modal_alert .modal-body").html(msg);
     $("#modal_alert").modal('show');
@@ -372,58 +469,4 @@ function myalert(msg){
 
 
 
-
-
- // timeout before a callback is called
-
- let timeout;
-
- // traversing the DOM and getting the input and span using their IDs
-
- let password = document.getElementById('password')
- let strengthBadge = document.getElementById('password_strength')
-
- // The strong and weak password Regex pattern checker
-let strongPassword = new RegExp(
-  "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
-);
-let mediumPassword = new RegExp(
-  "((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))"
-);
-
-function StrengthChecker(PasswordParameter) {
-  // We then change the badge's color and text based on the password strength
-
-  if (strongPassword.test(PasswordParameter)) {
-    strengthBadge.style.backgroundColor = "green";
-    strengthBadge.textContent = "Strong";
-  } else if (mediumPassword.test(PasswordParameter)) {
-    strengthBadge.style.backgroundColor = "blue";
-    strengthBadge.textContent = "Medium";
-  } else {
-    strengthBadge.style.backgroundColor = "red";
-    strengthBadge.textContent = "Weak";
-  }
-}
-
-
-password.addEventListener("input", () => {
-
-  //The badge is hidden by default, so we show it
-
-  strengthBadge.style.display= 'block'
-  clearTimeout(timeout);
-
-  //We then call the StrengChecker function as a callback then pass the typed password to it
-
-  timeout = setTimeout(() => StrengthChecker(password.value), 500);
-
-  //Incase a user clears the text, the badge is hidden again
-
-  if(password.value.length !== 0){
-      strengthBadge.style.display != 'block'
-  } else{
-      strengthBadge.style.display = 'none'
-  }
-});
 

@@ -7,7 +7,7 @@ function userAuth(req, res, next) {
 
 		req.session.uid = 13;
         req.session.email = 'emma@gmail.com';
-        req.session.role = '0';
+        req.session.role = '1';
 		next();
 
 
