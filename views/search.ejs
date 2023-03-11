@@ -1,0 +1,94 @@
+<%- include('./templates/header', {app: app_const, session, title: "Search"}); %>
+<style>
+    body {
+        background-color: #FFF;
+    }
+</style>
+
+<header class="main_header">
+    <h1> Search </h1>
+</header>
+
+<!-- Page content-->
+<main>
+
+
+    <section>
+
+        <div class="container text-center">
+            <form class="search_form py-5" method="GET">
+                <input value="<%= search %>" class="search" name="search" required placeholder="Search ">
+                <details>
+                    <summary>Filter Search</summary>
+                    <div>
+                        <div class="form-group">
+                            <label>Item Category </label>
+                            <select class="form-control" name="cat_id" id="cat_id">
+                                <option></option>
+                                <% cats.forEach(function(cat){ %>
+                                    <option <% if(cat_id == cat.cat_id){ %> selected <% } %> value="<%= cat.cat_id %>"><%= cat.name %></option>
+                                 <% }); %>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>location/City </label>
+                            <select class="form-control" name="loc_id" id="loc_id">
+                                <option></option>
+                                <% locs.forEach(function(loc){ %>
+                                    <option <% if(loc_id == loc.loc_id){ %> selected <% } %> value="<%= loc.loc_id %>"><%= loc.name %></option>
+                                 <% }); %>
+                            </select>
+                        </div>
+                        
+                    </div>
+                </details>
+                <div class="text-right"><button class="btn btn-secondary"> Search</button></div>
+            </form>
+
+            <% if (prds.length == 0 && search != "") { %>
+
+                <div class="alert alert-info py-5">No result found for this search<br><br>Refine your search and filter for better result</div>
+
+
+            <% } else if (prds.length == 0 && search == "") { %>
+
+                <div class="alert alert-info py-5"> Use the box above to search for items</div>
+
+            <%   } else { %>
+
+                <div class="row">
+
+                    <% prds.forEach(function(prd) { %>
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="prd_item">
+                                <span><%= prd.cat_name %></span>
+                                <a href="/item/<%= prd.prd_id %>">
+                                    <img src="/uploads/<%= prd.prd_image %>">
+                                </a>
+                                <h3><a href="/item/<%= prd.prd_id %>"><%= prd.prd_name %></a></h3>
+                                <div><span>Price:</span> &dollar;<%= prd.price %></div>
+                                <div><span>Location:</span> <%= prd.loc_name %></div>
+                            </div>
+                        </div>
+                    <% }); %>
+
+                </div>
+
+            <% }  %>
+            <div class="pagination py-3">
+            
+            <% if (page > 1) { %>
+                <a href="search?<%= qry_n %>&page=<%= (page - 1) %>">Previous Page</a>
+
+            <% }
+            if (prds.length == search_per_page) {
+            %>
+                <a href="search?<%= qry_n %>&page=<%= (page + 1) %>">Next Page</a>
+            <% } %>
+        </div>
+        <br><br><br>
+        </div>
+    </section>
+</main>
+
+<%- include('./templates/footer', {app: app_const}); %>

@@ -1,0 +1,68 @@
+<%- include('./templates/header', {app: app_const, session, title: prd.prd_name}); %>
+<style>
+    body {
+        background-color: #FFF;
+    }
+</style>
+
+<header class="main_header">
+    <h1> Item - <%= prd.prd_name %> </h1>
+</header>
+
+<!-- Page content-->
+<main>
+
+    <section>
+        <div class="container text-center">
+            <div class="row">
+            <div class="col-12 col-md-2">
+            </div>    
+            <div class="col-12 col-md-8 align-self-center">
+                    <table class="prd_item table table-striped">
+                        <tr>
+                            <td colspan="2">
+                                <img src="/uploads/<%= prd.prd_image %>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Price: </th>
+                            <td>&dollar;<%= prd.price %></td>
+                        </tr>
+                        <tr>
+                            <th>Category</th>
+                            <td><%= prd.cat_name %></td>
+                        </tr>
+                        <tr>
+                            <th>Item Location</th>
+                            <td><%= prd.loc_name %></td>
+                        </tr>
+                        
+                    </table>
+                    <h4>Item Description:</h4>
+                    <div style=" white-space:pre-wrap; text-align:left "><%= prd.prd_desc %></div>
+                    <br>
+                    <h4>Seller Details</h4>
+                    <table class="prd_item table table-striped">
+                        <tr>
+                            <th>Seller name: </th>
+                            <td><%= prd.fname %></td>
+                        </tr>
+                        <tr>
+                            <th>Phone number</th>
+                            <td><%= prd.phone %></td>
+                        </tr>
+                        <tr>
+                            <th>Address</th>
+                            <td><%= prd.address %></td>
+                        </tr>
+                  
+                    </table>
+                </div>
+
+            </div>
+            <br><br><br>
+        </div>
+    </section>
+</main>
+
+<%- include('./templates/footer', {app: app_const}); %>

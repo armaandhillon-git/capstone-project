@@ -354,6 +354,121 @@ User.change_password = function(req, res){
 }
 
 
+User.item_categories = function(req, res){
+    let errors = [];
+	session = req.session;
+	
+    if(session.role != 1){
+        res.send("No access");
+        return;
+    }
+
+    let name = req.body.name.trim();
+    let cat_id = req.body.cat_id.trim();
+    let ch = req.body.ch.trim();
+    
+    if (name.length < 3) {
+        res.send("category name is invalid");
+        return;
+    }
+    if(ch == "edit_category"){
+        dbModel.getOne("SELECT * FROM categories WHERE name = ? AND cat_id != ?", [name, cat_id], function(err, response){
+            //console.log(response);
+            if(response != null){
+                res.send("Category name already exist");
+                return;
+            }
+            // UPFATE the category
+            dbModel.execQuery("UPDATE categories SET ? WHERE cat_id = ?", [{name}, cat_id], function(err, response){
+                if(err){
+                    res.send("Error: "+ JSON.stringify(err));
+                }
+                else{
+                    res.send("PASS"+cat_id);
+                }
+            });
+        });
+    }
+    else{
+
+        dbModel.getOne("SELECT * FROM categories WHERE name = ?", [name], function(err, response){
+            //console.log(response);
+            if(response != null){
+                res.send("Category name already exist");
+                return;
+            }
+            // UPFATE the category
+            dbModel.execQuery("INSERT INTO categories SET ?", {name}, function(err, response){
+                if(err){
+                    res.send("Error: "+ JSON.stringify(err));
+                }
+                else{
+                    res.send("PASS"+response.insertId);
+                }
+            });
+        });
+    }
+}
+
+
+User.item_locations = function(req, res){
+    let errors = [];
+	session = req.session;
+	
+    if(session.role != 1){
+        res.send("No access");
+        return;
+    }
+
+    let name = req.body.name.trim();
+    let loc_id = req.body.loc_id.trim();
+    let ch = req.body.ch.trim();
+    
+    if (name.length < 3) {
+        res.send("location name is invalid");
+        return;
+    }
+    if(ch == "edit_location"){
+        dbModel.getOne("SELECT * FROM locations WHERE name = ? AND loc_id != ?", [name, loc_id], function(err, response){
+            //console.log(response);
+            if(response != null){
+                res.send("Location name already exist");
+                return;
+            }
+            // UPFATE the location
+            dbModel.execQuery("UPDATE locations SET ? WHERE loc_id = ?", [{name}, loc_id], function(err, response){
+                if(err){
+                    res.send("Error: "+ JSON.stringify(err));
+                }
+                else{
+                    res.send("PASS"+loc_id);
+                }
+            });
+        });
+    }
+    else{
+
+        dbModel.getOne("SELECT * FROM locations WHERE name = ?", [name], function(err, response){
+            //console.log(response);
+            if(response != null){
+                res.send("location name already exist");
+                return;
+            }
+            // Create location
+            dbModel.execQuery("INSERT INTO locations SET ?", {name}, function(err, response){
+                if(err){
+                    res.send("Error: "+ JSON.stringify(err));
+                }
+                else{
+                    res.send("PASS"+response.insertId);
+                }
+            });
+        });
+    }
+}
+
+
+
 
 
 module.exports = User;

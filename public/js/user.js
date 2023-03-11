@@ -74,7 +74,7 @@ function update_category(event){
    
    $.ajax({
 	 type: "POST",
-	 url:   "",
+	 url:   "/user/item-categories",
 	 data: fdata,
 	 success: function(data){
 		     data = data.trim();
@@ -119,15 +119,12 @@ function remove_category(event, np){
 		 $("#modal_delete").modal('show');  
 	 }
      else{
-		
-	    let fdata = {ch: 'remove_category', id: glob_entry_id};
 	    let sbutton = $('.table  #row_'+ glob_entry_id + ' .btn_row').html();
 	    $('.table  #row_'+ glob_entry_id + ' .btn_row').html('<span class="fa fa-spin fa-spinner"></span> processing...')
 			
 		 $.ajax({
-		 type: "POST",
-		 url:  "",
-		 data: fdata,
+		 type: "DELETE",
+		 url:  "/user/item-categories/"+glob_entry_id,
 		 success: function(data){  console.log(data);
 		 		if(data.substr(0,4) == 'PASS'){
 					
@@ -195,7 +192,7 @@ function update_location(event){
    
    $.ajax({
 	 type: "POST",
-	 url:   "",
+	 url:   "/user/item-locations",
 	 data: fdata,
 	 success: function(data){
 		     data = data.trim();
@@ -241,14 +238,12 @@ function remove_location(event, np){
 	 }
      else{
 		
-	    let fdata = {ch: 'remove_location', id: glob_entry_id};
 	    let sbutton = $('.table  #row_'+ glob_entry_id + ' .btn_row').html();
 	    $('.table  #row_'+ glob_entry_id + ' .btn_row').html('<span class="fa fa-spin fa-spinner"></span> processing...')
 			
 		 $.ajax({
-		 type: "POST",
-		 url:  "",
-		 data: fdata,
+		 type: "DELETE",
+		 url:  "/user/item-locations/"+glob_entry_id,
 		 success: function(data){  console.log(data);
 		 		if(data.substr(0,4) == 'PASS'){
 					

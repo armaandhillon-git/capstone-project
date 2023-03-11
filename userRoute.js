@@ -145,6 +145,68 @@ router.get("/all-items", (req, res) => {
 });
 
 
+
+// Item Category  Page - accessible to only admin
+router.get("/item-categories", (req, res) => {
+	session = req.session;
+    if(session.role != 1){
+        res.send("NO access");
+        return;
+    }
+    dbModel.getAll("SELECT * FROM categories", [], function(err, response){
+		let cats = response;
+		res.render("user/item-categories", {app_const, session, cats});
+	});
+
+});
+
+
+// REMOVE ITEM Category
+router.delete("/item-categories/:cat_id", (req, res) => {
+	session = req.session;
+    if(session.role != 1){ // If user is an Admin
+        res.send("NO access");
+        return;
+    }
+    dbModel.execQuery("DELETE FROM categories WHERE cat_id = ?", [req.params.cat_id], function(err, response){
+        res.send("PASS");
+    });
+    
+});
+
+
+
+// Item Location  Page - accessible to only admin
+router.get("/item-locations", (req, res) => {
+	session = req.session;
+    if(session.role != 1){
+        res.send("NO access");
+        return;
+    }
+    dbModel.getAll("SELECT * FROM locations", [], function(err, response){
+		let locs = response;
+		res.render("user/item-locations", {app_const, session, locs});
+	});
+
+});
+
+
+// REMOVE ITEM Location
+router.delete("/item-locations/:loc_id", (req, res) => {
+	session = req.session;
+    if(session.role != 1){ // If user is an Admin
+        res.send("NO access");
+        return;
+    }
+    dbModel.execQuery("DELETE FROM locations WHERE loc_id = ?", [req.params.loc_id], function(err, response){
+        res.send("PASS");
+    });
+    
+});
+
+
+
+
 // UPDATE Profile
 router.get("/update-profile", (req, res) => {
 	session = req.session;
@@ -158,14 +220,13 @@ router.get("/update-profile", (req, res) => {
 	});
 });
 
+
+
 // Render Change Password  page
 router.get("/change-password", (req, res) => {
 	session = req.session;
 	res.render("user/change-password", {app_const, session});
 });
-
-
-
 
 
 // Handle user add Items submission
@@ -180,6 +241,13 @@ router.post("/update-profile",  user.update_profile)
 
 // Handle Chnage   Password Request
 router.post("/change-password",  user.change_password)
+
+// Handle Item categories 
+router.post("/item-categories", user.item_categories)
+
+
+// Handle Item Locations 
+router.post("/item-locations", user.item_locations)
 
 
 
