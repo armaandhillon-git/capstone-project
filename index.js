@@ -90,6 +90,16 @@ app.post('/sign-up', User.sign_up);
 app.post('/login', User.login);
 
 
+// Handle user  Logout Request 
+app.get('/logout', function(req, res){
+	if(req.session){
+		req.session.destroy();
+	}
+	res.redirect("/");
+});
+
+
+
 // SEARCH PAGE 
 app.get('/search', function(req, res){
 	let session = req.session;
